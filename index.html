@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finals</title>
+</head>
+<body>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap');
+body{
+background-color:#FFFFA0;
+}
+h1{
+    font-family:Reenie Beanie;
+}
+#UClock {
+            font-weight: bold;
+            margin-top: 5px;
+            border-radius:15px;
+            border:solid;
+            background-color:white;
+            text-align:center;
+            width:22%;
+        }
+        #Time{
+            Color:green;
+        }
+        #SNames input {
+            margin-right: 5px;
+        }
+        button {
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+        #Absent {
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+#StudentList{
+    font-family:Reenie Beanie;
+    font-size:2em;
+}
+#EndList{
+    background-color:red;
+    color:white;
+}
+#ResetList{
+    background-color:yellow;
+}
+    
+    
+</style>
+
+<h1>Attendance Checker!</h1>
+<p>Total of Students: 25</p>
+
+<div id="Clock-Design">
+    <label id="Time">TIME: </label>
+    <div id="UClock">00:00:00</div>
+</div>
+<hr color="red">
+
+<div id="SNames">
+    <label>Student Names:</label>
+    <br />
+    <input id="Fname">
+    <button id="mySubmit">Enter</button>
+    <hr color="black">
+    <div id="StudentList"></div>
+    <div id="Absent"></div>
+    <button id="EndList">End List</button>
+    <button id="ResetList">Reset List</button>
+</div>
+
+<script>
+let count = 0;
+const maxStudents = 25;
+let listEnded = false;
+
+const submitButton = document.getElementById("mySubmit");
+const inputField = document.getElementById("Fname");
+const studentListDiv = document.getElementById("StudentList");
+const endListButton = document.getElementById("EndList");
+const resetListButton = document.getElementById("ResetList");
+const absentDiv = document.getElementById("Absent");
+
+function updateUClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    const meridiem = hours >= 12 ? " PM " : " AM ";
+    hours = hours % 12 || 12;
+    hours = hours.toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const timeString = `${hours}:${minutes}:${seconds} ${meridiem}`;
+    document.getElementById("UClock").textContent = timeString;
+}
+
+// Update clock every second
+updateUClock();
+setInterval(updateUClock, 1000);
+
+function endList() {
+    listEnded = true;
+    submitButton.disabled = true;
+    inputField.disabled = true;
+
+    const absent = maxStudents - count;
+    absentDiv.textContent = `Students absent: ${absent}`;
+
+    alert("Attendance list has been ended.");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    submitButton.onclick = function() {
+        if (listEnded) {
+            alert("The list has been ended. Cannot add more students.");
+            return;
+        }
+
+        const studentname = inputField.value.trim();
+        if (studentname === "") {
+            alert("Please enter a name!");
+            return;
+        }
+        if (count >= maxStudents) {
+            endList(); // Automatically end list when limit reached
+            return;
+        }
+
+        count++;
+        const newLine = document.createElement("div");
+        newLine.textContent = `${count}. ${studentname}`;
+        studentListDiv.appendChild(newLine);
+
+        inputField.value = "";
+        inputField.focus();
+    }
+
+    // End List button
+    endListButton.onclick = function() {
+        if (!listEnded) {
+            endList();
+        }
+    }
+
+    // Reset List button
+    resetListButton.onclick = function() {
+        if (confirm("Are you sure you want to reset the list?")) {
+            studentListDiv.innerHTML = "";
+            absentDiv.textContent = "";
+            count = 0;
+            listEnded = false;
+            inputField.value = "";
+            inputField.disabled = false;
+            submitButton.disabled = false;
+            inputField.focus();
+        }
+    }
+
+});
+</script>
+
+</body>
+</html>
